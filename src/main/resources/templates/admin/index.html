@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="navbar.html">
+<div layout:fragment="content">
+    <link rel="stylesheet" type="text/css" th:href="@{'/css/material-dashboard.css'}">
+    <aside style="margin-top: 60px; width: 400px"
+           class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark"
+           id="sidenav-main">
+        <div class="sidenav-header">
+            <a class="navbar-brand m-0" href="https://demos.creative-tim.com/material-dashboard/pages/dashboard"
+               target="_blank">
+                <span style="font-size: 25px" class="ms-1 font-weight-bold text-white">Admin Page</span>
+            </a>
+        </div>
+        <hr class="horizontal light mt-0 mb-2">
+        <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/admin-panel'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">person</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Users List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/categories'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">receipt_long</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Category</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/cartLists'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">receipt_long</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Carts</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/profile'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">person</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Profile</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <main class="main-content border-radius-lg ">
+        <h1 style="margin-left: 50px; margin-top: 20px"> USERS PAGE! </h1>
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Name</th>
+                <th scope="col">email</th>
+                <th scope="col">role</th>
+                <th scope="col">UnBan</th>
+                <th scope="col">ban</th>
+                <th scope="col">Roles</th>
+            </tr>
+            </thead>
+            <tbody id="userListBody">
+            </tbody>
+        </table>
+
+        <script type="text/javascript">
+            loadUsers();
+
+            function loadUsers() {
+                const httpRequest = new XMLHttpRequest();
+                httpRequest.open("GET", "/api/users", true);
+                httpRequest.onreadystatechange = function () {
+                    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200) {
+                        let userList = JSON.parse(httpRequest.responseText);
+                        let tableContent = "";
+                        for (let i = 0; i < userList.length; i++) {
+                            let roles = userList[i].roles;
+                            // Убедимся, что roles - это массив
+                            if (typeof roles === "string") {
+                                roles = roles.split(','); // Преобразуем строку в массив, если это строка
+                            }
+
+                                tableContent += "<tr>";
+                            tableContent += "<td>" + userList[i].id + "</td>";
+                            tableContent += "<td>" + userList[i].title + "</td>";
+                            tableContent += "<td>" + userList[i].email + "</td>";
+                            tableContent += "<td>" + roles.join(', ') + "</td>"; // Теперь roles - это массив
+                            tableContent += "<td><button class='btn btn-primary btn-sm' onClick='unbanUser(" + userList[i].id + ", false)'>Unban</button> </td>";
+                            tableContent += "<td> <button class='btn btn-danger btn-sm' onClick='banUser(" + userList[i].id + ", true)'>Ban</button></td>";
+                            tableContent += "<td><button class='btn btn-light btn-sm' onclick='openDetailsModal(" + userList[i].id + ", \"" + userList[i].title + "\")'>DETAILS</button></td>";
+                            tableContent += "</tr>";
+                        }
+                        document.getElementById("userListBody").innerHTML = tableContent;
+                    }
+                }
+                httpRequest.send();
+            }
+
+
+            function banUser(userId, banned) {
+                console.log(userId, banned);
+                const url = "/api/users/ban";
+                const data = {user_id: userId, banned: banned};
+                $.post(url, data, function (data) {
+                    console.log(data);
+                    loadUsers();
+                    showStatusMessage('Пользователь заблокирован успешно!'); // Показываем сообщение
+                })
+            }
+
+            function unbanUser(userId, banned) {
+                console.log(userId, banned);
+                const url = "/api/users/unban";
+                const data = {user_id: userId, banned: banned};
+                $.post(url, data, function (data) {
+                    console.log(data);
+                    loadUsers();
+                    showStatusMessage('Пользователь разблокирован успешно!'); // Показываем сообщение
+                })
+            }
+
+            function showStatusMessage(message) {
+                // Устанавливаем сообщение
+                document.getElementById("statusMessage").innerText = message;
+
+                // Показываем модальное окно
+                const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+                statusModal.show();
+            }
+
+            function openDetailsModal(id) {
+                detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                const httpRequest = new XMLHttpRequest();
+                httpRequest.open("GET", "/api/users/" + id, true);
+                httpRequest.onreadystatechange = function () {
+                    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200) {
+                        let result = JSON.parse(httpRequest.responseText);
+                        userId.value = result.id;
+                        detailsModal.show();
+                    }
+                }
+                httpRequest.send();
+            }
+
+        </script>
+        <div class="modal fade" id="detailsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                            Изменить роль для пользователя: <span id="userName"></span> <!-- Исправлено -->
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form onsubmit="event.preventDefault();">
+                        <input type="hidden" id="userId" name="userId" required>
+                        <label for="permissionSelect">Выберите новую роль:</label>
+                        <select id="permissionSelect" name="permissionId" required>
+                            <option value="1">ROLE_USER</option>
+                            <option value="2">ROLE_ARTIST</option>
+                            <option value="3">ROLE_ADMIN</option>
+                        </select>
+                        <br><br>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" onclick="changeUserRole(userId.value, permissionSelect.value);" class="btn btn-primary">Изменить роль</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="statusModalLabel">Сообщение</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="statusMessage"></p> <!-- Здесь будет отображаться сообщение -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openDetailsModal(id, name) {
+                const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                document.getElementById('userId').value = id;
+                document.getElementById('userName').innerText = name;
+                detailsModal.show();
+            }
+
+
+            function changeUserRole(userId, permissionId) {
+                $.ajax({
+                    url: '/users/' + userId + '/changeRole',
+                    type: 'POST',
+                    data: { permissionId: permissionId },
+                    success: function(response) {
+                        console.log('Role change successful');
+                        const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                        detailsModal.hide();
+                        loadUsers();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error occurred:', error);
+                    }
+                });
+            }
+
+        </script>
+
+    </main>
+</div>
+
+</html>

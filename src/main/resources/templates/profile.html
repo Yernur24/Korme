@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="navbar.html">
+<div layout:fragment="content">
+    <section class="h-100 gradient-custom-2">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-9 col-xl-7">
+                    <div class="card">
+                        <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+                            <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;margin-top: -50px">
+                                <img th:src="${#authentication.principal.loadUserAvatar()}"
+                                     alt="Generic placeholder image" class="img-fluid img-thumbnail mb-2"
+                                     style="width: 150px; z-index: 1; margin-top: -50px">
+                            </div>
+                            <div class="ms-3" style="margin-top: 50px;  ">
+                                <h5 th:text="${#authentication.principal.fullName}"></h5>
+                                <p>BIR SOZ</p>
+                                <div style="margin-top: 10px" class="row mb-2">
+                                    <div class="col-12">
+                                        <button style=" font-size: 14px; height: 50px;width: 200px; background-color: darkblue" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addCategory">
+                                            edit profile
+                                        </button>
+                                        <div class="modal fade" id="addCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Profile</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form th:action="@{'/update/user/'}" method="post" enctype="multipart/form-data">
+                                                            <label for="full_name" class="col-md-4 col-lg-3 col-form-label">
+                                                                <input name="full_name" type="text" class="form-control" id="full_name" th:value="${#authentication.principal.fullName}">
+                                                            </label>
+                                                            <label class="input-file">
+                                                                <span class="input-file-text" type="text"></span>
+                                                                <input type="file" name="avatar">
+                                                                <span class="input-file-btn">Выберите файл</span>
+                                                            </label>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button class="btn btn-primary">Save</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4 text-black">
+                            <div class="mb-5">
+                                <p class="lead fw-normal mb-1">About</p>
+                                <div class="p-4" style="background-color: #f8f9fa;">
+<!--                                    <p class="font-italic mb-1">Role: </p>-->
+                                    <p class="font-italic mb-1">Lives in New York</p>
+                                    <p class="font-italic mb-0">Artist</p>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <p class="lead fw-normal mb-0">Recent photos</p>
+                                <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col mb-2">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp"
+                                         alt="image 1" class="w-100 rounded-3">
+                                </div>
+                                <div class="col mb-2">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp"
+                                         alt="image 1" class="w-100 rounded-3">
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp"
+                                         alt="image 1" class="w-100 rounded-3">
+                                </div>
+                                <div class="col">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp"
+                                         alt="image 1" class="w-100 rounded-3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>

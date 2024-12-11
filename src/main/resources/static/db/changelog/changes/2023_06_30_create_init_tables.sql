@@ -1,0 +1,26 @@
+-- CREATE TABLE permission(
+--                              id bigint auto_increment,
+--                              role varchar(255),
+--                              primary key (id)
+-- );
+--
+-- CREATE TABLE users (
+--                          id bigint auto_increment,
+--                          email varchar(255),
+--                          full_name varchar(255),
+--                          password varchar(255),
+--                          primary key (id)
+-- );
+--
+-- CREATE TABLE users_permissions(
+--                                     user_id bigint,
+--                                     permissions_id bigint
+-- );
+--
+-- -- CREATE TABLE products(
+-- --                           id bigint auto_increment,
+-- --                           name varchar(255),
+-- --                           description text,
+-- --                           price int,
+-- --                           primary key (id)
+-- -- );

@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="navbar.html"
+      xmlns:th="http://www.thymeleaf.org">
+<div layout:fragment="content" class="mt-5">
+    <hr>
+    <form th:action="@{'/addpost'}" method="post" enctype="multipart/form-data" style="margin: 20px;">
+        <legend>Create product</legend>
+        <div class="mb-3">
+            <label  class="form-label">Name</label>
+            <input type="text"  name="name" class="form-control" placeholder="Name">
+        </div>
+        <div class="mb-3">
+            <label for="disabledTextInput" class="form-label">Author</label>
+            <input type="text" id="disabledTextInput" class="form-control" name="author" placeholder="Author">
+        </div>
+        <div class="mb-3">
+            <label for="disabledTextInput" class="form-label">Content</label>
+            <input type="text" id="disabledTextInput" class="form-control" name="content" placeholder="Content">
+        </div>
+        <div class="mb-3">
+            <label for="disabledTextInput" class="form-label">Price</label>
+            <input type="text" id="disabledTextInput" class="form-control" name="price" placeholder="Price">
+        </div>
+        <div class="mb-3">
+            <label for="disabledSelect" class="form-label">Category</label>
+            <select class="form-control" name="category.id" >
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="imgInput" class="form-label"> Image</label>
+            <input class="form-control" type="file" id="imgInput" name="image">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </form>
+</div>
+</html>

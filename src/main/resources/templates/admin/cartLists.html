@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="navbar.html">
+<div layout:fragment="content">
+    <link rel="stylesheet" type="text/css" th:href="@{'/css/material-dashboard.css'}">
+    <aside style="margin-top: 60px; width: 400px"
+           class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark"
+           id="sidenav-main">
+        <div class="sidenav-header">
+            <a class="navbar-brand m-0" href="https://demos.creative-tim.com/material-dashboard/pages/dashboard"
+               target="_blank">
+                <span style="font-size: 25px" class="ms-1 font-weight-bold text-white">Admin Page</span>
+            </a>
+        </div>
+        <hr class="horizontal light mt-0 mb-2">
+        <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/admin-panel'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">person</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Users List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/categories'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">receipt_long</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Category</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/cartLists'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">receipt_long</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Carts</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{'/profile'}">
+                        <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">person</i>
+                        </div>
+                        <span style="font-size: 20px" class="nav-link-text ms-1">Profile</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <main class="main-content border-radius-lg ">
+        <div class="container mt-5">
+            <h1 class="mb-4">Корзина товаров</h1>
+
+            <!-- Таблица для отображения товаров -->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Клиент</th>
+                    <th>Название товара</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Итого</th>
+                    <th>Статус</th>
+                </tr>
+                </thead>
+                <tbody id="cart-container">
+                </tbody>
+            </table>
+        </div>
+        <script>
+            function loadCarts() {
+                fetch("http://localhost:8011/api/users/carts/complete")
+                    .then(response => response.json())
+                    .then(data => {
+                        const container = document.getElementById('cart-container');
+                        container.innerHTML = '';
+
+                        data.forEach((cart, index) => {
+                            let cartRow = document.createElement('tr');
+
+                            if (cart.status === "ACTIVE") {
+                                cartRow.classList.add('active');
+                            } else if (cart.status === "COMPLETE") {
+                                cartRow.classList.add('complete');
+                            }
+
+                            cartRow.innerHTML = `
+                        <td>${index + 1}</td> <!-- Номер строки -->
+                        <td>${cart.userName}</td>
+                        <td>${cart.productName}</td>
+                        <td>${cart.quantity}</td>
+                        <td>${cart.price} ₸</td>
+                        <td>${cart.totalSum} ₸</td>
+                        <td>${cart.status === 'ACTIVE' ? 'В корзине' : 'Куплен'}</td>
+                    `;
+
+                            container.appendChild(cartRow);
+                        });
+                    })
+                    .catch(error => console.error("Ошибка при загрузке корзины:", error));
+            }
+
+            window.onload = loadCarts;
+        </script>
+    </main>
+</div>
+</html>
